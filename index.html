@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es-CO">
+<html lang="es-CO" translate="no">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -595,8 +595,7 @@ db.auth.onAuthStateChange(async (_e, sesion) => {
     $('#login').hidden = true;
     $('#app').hidden = false; $('#nav').hidden = false;
     try{ await refrescar(); }
-    catch(err){ $('#vInicio').innerHTML =
-      `<p class="err">No se pudieron cargar los datos: ${esc(err.message)}</p>`; }
+    catch(err){ console.error(err); alert('Error: ' + err.message); }
   } else {
     $('#login').hidden = false;
     $('#app').hidden = true; $('#nav').hidden = true;
