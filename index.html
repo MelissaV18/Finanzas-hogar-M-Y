@@ -60,8 +60,6 @@ label{display:block;font-size:13px;font-weight:500;color:var(--gris);margin:0 0 
 header{padding:20px 0 14px;display:flex;align-items:center;justify-content:space-between}
 header h1{font-size:clamp(17px,4.7vw,21px);font-weight:800;letter-spacing:-.025em;line-height:1.15}
 header{align-items:flex-start}
-#ver{font-size:10px;font-weight:700;color:#fff;background:var(--azul-2);
-  padding:2px 7px;border-radius:99px;vertical-align:3px;margin-left:4px}
 header button{font-size:13px;color:var(--gris);padding:6px 2px}
 
 /* ═══ HERO — panel oscuro, lo primero que se ve ═══ */
@@ -205,8 +203,7 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 <div id="app" hidden>
   <div class="wrap">
     <header>
-      <h1>Finanzas Hogar<br><span style="color:var(--azul-2)">Meli y Yobin</span>
-        <span id="ver">v5</span></h1>
+      <h1>Finanzas Hogar<br><span style="color:var(--azul-2)">Meli y Yobin</span></h1>
       <button id="salir">Salir</button>
     </header>
     <p id="aviso" class="err" hidden></p>
@@ -322,8 +319,8 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 //  1. CONFIGURACIÓN — reemplazar con los valores de su proyecto
 //     Supabase > Project Settings > Data API
 // ════════════════════════════════════════════════════════════
-const SUPABASE_URL  = 'https://bdcvwakbiwgkldrqsjdo.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_n9YV58SpbRTeeT4rrnellg_VS2_J524';
+const SUPABASE_URL  = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_ANON = 'TU-CLAVE-ANON-PUBLICA';
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);
