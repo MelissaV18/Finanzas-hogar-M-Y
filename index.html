@@ -2,6 +2,7 @@
 <html lang="es-CO" translate="no">
 <head>
 <meta charset="utf-8">
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Casa</title>
 <link rel="manifest" href="manifest.json">
@@ -163,6 +164,7 @@ nav button.on{color:var(--tinta);font-weight:700;border-top-color:var(--verde)}
       <h1>Casa</h1>
       <button id="salir">Salir</button>
     </header>
+    <p id="aviso" class="err" hidden></p>
   </div>
 
   <!-- ---- INICIO ---- -->
@@ -197,6 +199,7 @@ nav button.on{color:var(--tinta);font-weight:700;border-top-color:var(--verde)}
 
     <section>
       <h2>Últimos movimientos</h2>
+      <div class="sub">Tocá uno para verlo o borrarlo.</div>
       <ul id="movs"></ul>
     </section>
   </div>
@@ -205,7 +208,7 @@ nav button.on{color:var(--tinta);font-weight:700;border-top-color:var(--verde)}
   <div id="vPlan" class="wrap vista" hidden>
     <section>
       <h2>Falta por pagar</h2>
-      <div class="sub">Tocá el círculo cuando lo paguen. Se registra como gasto solo.</div>
+      <div class="sub">Tocá el círculo cuando lo paguen. Tocá el nombre para cambiarlo o borrarlo.</div>
       <ul id="pend"></ul>
     </section>
     <div class="acciones">
@@ -255,8 +258,8 @@ nav button.on{color:var(--tinta);font-weight:700;border-top-color:var(--verde)}
 //  1. CONFIGURACIÓN — reemplazar con los valores de su proyecto
 //     Supabase > Project Settings > Data API
 // ════════════════════════════════════════════════════════════
-const SUPABASE_URL  = 'https://bdcvwakbiwgkldrqsjdo.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_n9YV58SpbRTeeT4rrnellg_VS2_J524';
+const SUPABASE_URL  = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_ANON = 'TU-CLAVE-ANON-PUBLICA';
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -265,6 +268,10 @@ const db = createClient(SUPABASE_URL, SUPABASE_ANON);
 //  2. UTILIDADES
 // ════════════════════════════════════════════════════════════
 const $ = s => document.querySelector(s);
+const txt  = (s,v) => { const e = $(s); if (e) e.textContent = v; };
+const html = (s,v) => { const e = $(s); if (e) e.innerHTML   = v; };
+const cls  = (s,v) => { const e = $(s); if (e) e.className   = v; };
+const ancho= (s,v) => { const e = $(s); if (e) e.style.width = v; };
 const plata = n => (n<0?'−':'') + '$' + Math.abs(Math.round(n)).toLocaleString('es-CO');
 const hoy = () => new Date().toISOString().slice(0,10);
 const MES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
@@ -325,13 +332,13 @@ const libre         = () => plataHoy() - vencidas();
 function pintar(){
   const hay = plataHoy(), comp = vencidas(), lib = libre();
 
-  $('#hLibre').textContent = plata(lib);
-  $('#hLibre').classList.toggle('neg', lib < 0);
-  $('#hHay').textContent  = plata(hay);
-  $('#hComp').textContent = plata(comp);
+  txt('#hLibre', plata(lib));
+  $('#hLibre')?.classList.toggle('neg', lib < 0);
+  txt('#hHay',  plata(hay));
+  txt('#hComp', plata(comp));
   const base = Math.max(hay, comp, 1);
-  $('#bComp').style.width  = (Math.min(comp,base)/base*100) + '%';
-  $('#bLibre').style.width = (Math.max(lib,0)/base*100) + '%';
+  ancho('#bComp',  (Math.min(comp,base)/base*100) + '%');
+  ancho('#bLibre', (Math.max(lib,0)/base*100) + '%');
 
   // ---- quincena en curso ----
   const q = quincena(hoy());
@@ -342,30 +349,32 @@ function pintar(){
   const entra  = real > 0 ? real : esperado;
   const cierre = entra - falta - pagado;
 
-  $('#qNombre').textContent = q.nombre;
-  $('#qFalta').textContent  = plata(falta);
-  $('#qPagado').textContent = plata(pagado);
-  $('#qEntra').textContent  = plata(entra);
-  $('#qEntraLab').textContent = real > 0 ? 'Entró' : 'Debería entrar';
-  $('#qCierreLab').textContent = cierre < 0 ? 'Falta' : 'Sobra';
-  $('#qCierre').textContent = plata(cierre);
-  $('#qCierre').className = 'num' + (cierre < 0 ? ' mal' : '');
+  txt('#qNombre', q.nombre);
+  txt('#qFalta',  plata(falta));
+  txt('#qPagado', plata(pagado));
+  txt('#qEntra',  plata(entra));
+  txt('#qEntraLab',  real > 0 ? 'Entró' : 'Debería entrar');
+  txt('#qCierreLab', cierre < 0 ? 'Falta' : 'Sobra');
+  txt('#qCierre', plata(cierre));
+  cls('#qCierre', 'num' + (cierre < 0 ? ' mal' : ''));
 
   // ---- movimientos recientes ----
   const movs = [
-    ...S.aportes.map(a=>({f:a.fecha, t:`Aporte de ${a.persona}`, m:a.monto, mas:true})),
-    ...S.gastos .map(g=>({f:g.fecha, t:g.detalle || g.bolsa, m:g.monto, mas:false, sub:g.bolsa}))
+    ...S.aportes.map(a=>({f:a.fecha, t:`Aporte de ${a.persona}`, m:a.monto, mas:true,
+                          tipo:'aportes', id:a.id})),
+    ...S.gastos .map(g=>({f:g.fecha, t:g.detalle || g.bolsa, m:g.monto, mas:false, sub:g.bolsa,
+                          tipo:'gastos',  id:g.id}))
   ].sort((x,y)=> y.f.localeCompare(x.f)).slice(0,12);
 
-  $('#movs').innerHTML = movs.length ? movs.map(m=>`
-    <li class="item">
+  html('#movs', movs.length ? movs.map(m=>`
+    <li class="item" data-mov="${m.tipo}:${m.id}" style="cursor:pointer">
       <div class="cuerpo">
         <div class="t">${esc(m.t)}</div>
         <div class="m">${fechaCorta(m.f)}${m.sub?' · '+esc(m.sub):''}</div>
       </div>
       <div class="v" style="color:${m.mas?'var(--verde)':'inherit'}">
         ${m.mas?'+':'−'}${plata(m.m).replace('−','')}</div>
-    </li>`).join('') : '<li class="vacio">Todavía no hay movimientos.</li>';
+    </li>`).join('') : '<li class="vacio">Todavía no hay movimientos.</li>');
 
   pintarPlan();
   pintarMes();
@@ -373,18 +382,18 @@ function pintar(){
 
 function pintarPlan(){
   const pend = pendientes();
-  $('#pend').innerHTML = pend.length ? pend.map(p=>`
+  html('#pend', pend.length ? pend.map(p=>`
     <li class="item ${p.fecha < hoy() ? 'vencido':''}">
       <button class="tick" data-pagar="${p.id}" aria-label="Marcar pagado"></button>
-      <div class="cuerpo">
+      <div class="cuerpo" data-editar="${p.id}" style="cursor:pointer">
         <div class="t">${esc(p.detalle||p.bolsa)}</div>
         <div class="m">${fechaCorta(p.fecha)}${p.fecha<hoy()?' · vencida':''} · ${esc(p.bolsa)}</div>
       </div>
       <div class="v">${plata(p.monto)}</div>
-    </li>`).join('') : '<li class="vacio">No falta nada por pagar.</li>';
+    </li>`).join('') : '<li class="vacio">No falta nada por pagar.</li>');
 
   const hechos = S.plan.filter(p=>p.estado==='Pagado').slice(-10).reverse();
-  $('#pagados').innerHTML = hechos.length ? hechos.map(p=>`
+  html('#pagados', hechos.length ? hechos.map(p=>`
     <li class="item hecho">
       <button class="tick on" data-deshacer="${p.id}" aria-label="Volver a pendiente"></button>
       <div class="cuerpo">
@@ -392,11 +401,12 @@ function pintarPlan(){
         <div class="m">${fechaCorta(p.fecha)}</div>
       </div>
       <div class="v">${plata(p.monto)}</div>
-    </li>`).join('') : '<li class="vacio">Nada pagado todavía.</li>';
+    </li>`).join('') : '<li class="vacio">Nada pagado todavía.</li>');
 }
 
 function pintarMes(){
   const sel = $('#selMes');
+  if (!sel) return;
   if (!sel.options.length){
     const set = new Set([...S.aportes,...S.gastos,...S.plan].map(x=>x.fecha.slice(0,7)));
     set.add(hoy().slice(0,7));
@@ -412,12 +422,12 @@ function pintarMes(){
 
   const ap = suma(S.aportes.filter(x=>entre(x.fecha,ini,fin)));
   const ga = suma(S.gastos .filter(x=>entre(x.fecha,ini,fin)));
-  $('#mAp').textContent = plata(ap);
-  $('#mGa').textContent = plata(ga);
-  $('#mRes').textContent = plata(ap-ga);
-  $('#mRes').className = 'num' + (ap-ga<0?' mal':'');
+  txt('#mAp', plata(ap));
+  txt('#mGa', plata(ga));
+  txt('#mRes', plata(ap-ga));
+  cls('#mRes', 'num' + (ap-ga<0?' mal':''));
 
-  $('#mBolsas').innerHTML = S.bolsas.map(b=>{
+  html('#mBolsas', S.bolsas.map(b=>{
     const pres = Number(b.presupuesto);
     const pag  = suma(S.gastos.filter(g=>g.bolsa===b.nombre && entre(g.fecha,ini,fin)));
     const fal  = suma(pendientes().filter(p=>p.bolsa===b.nombre && entre(p.fecha,ini,fin)));
@@ -425,14 +435,14 @@ function pintarMes(){
     return `<tr><td>${esc(b.nombre)}</td><td class="num">${plata(pres)}</td>
       <td class="num">${plata(pag)}</td>
       <td class="num${sob<0?' mal':''}">${plata(fal)}</td></tr>`;
-  }).join('');
+  }).join(''));
 
-  $('#mQuien').innerHTML = S.personas.map(p=>{
+  html('#mQuien', S.personas.map(p=>{
     const mes = suma(S.aportes.filter(x=>x.persona===p.nombre && entre(x.fecha,ini,fin)));
     const tot = suma(S.aportes.filter(x=>x.persona===p.nombre));
     return `<tr><td>${esc(p.nombre)}</td><td class="num">${plata(mes)}</td>
       <td class="num" style="color:var(--gris)">${plata(tot)} total</td></tr>`;
-  }).join('');
+  }).join(''));
 }
 
 const esc = s => String(s??'').replace(/[&<>"]/g, c=>
@@ -455,6 +465,30 @@ $('#velo').onclick = cerrarHoja;
 const optBolsas = () => S.bolsas.map(b=>`<option>${esc(b.nombre)}</option>`).join('');
 
 const FORMS = {
+  verMov: (tabla, x) => `
+    <h3>${tabla==='aportes' ? 'Aporte de '+esc(x.persona) : esc(x.detalle||x.bolsa)}</h3>
+    <dl style="display:grid;grid-template-columns:1fr auto;gap:9px 12px;font-size:15px;margin-bottom:22px">
+      <dt style="color:var(--gris)">Cuánto</dt><dd class="num" style="text-align:right;font-weight:600">${plata(x.monto)}</dd>
+      <dt style="color:var(--gris)">Fecha</dt><dd style="text-align:right">${fechaCorta(x.fecha)}</dd>
+      ${tabla==='gastos' ? `<dt style="color:var(--gris)">Bolsa</dt><dd style="text-align:right">${esc(x.bolsa)}</dd>
+      <dt style="color:var(--gris)">Salió de</dt><dd style="text-align:right">${esc(x.origen)}</dd>` : ''}
+    </dl>
+    <button class="guardar" style="background:var(--rojo)" data-borrar="${tabla}:${x.id}">Borrar</button>
+    <button class="cerrar" data-x>Cerrar</button>`,
+
+  editarPlan: p => `
+    <h3>Cambiar cuenta</h3>
+    <div class="field"><label for="dE">Qué es</label><input id="dE" value="${esc(p.detalle||'')}"></div>
+    <div class="field"><label for="bE">Bolsa</label><select id="bE">${
+      S.bolsas.map(b=>`<option${b.nombre===p.bolsa?' selected':''}>${esc(b.nombre)}</option>`).join('')
+    }</select></div>
+    <div class="field"><label for="fE">Para cuándo</label><input id="fE" type="date" value="${p.fecha}"></div>
+    <div class="field"><label for="mE">Cuánto</label>
+      <input id="mE" type="number" inputmode="numeric" value="${Number(p.monto)}"></div>
+    <button class="guardar" data-actualizar="${p.id}">Guardar cambios</button>
+    <button class="guardar" style="background:var(--rojo);margin-top:8px" data-borrar="plan:${p.id}">Borrar</button>
+    <button class="cerrar" data-x>Cancelar</button>`,
+
   aporte: () => `
     <h3>Registrar aporte</h3>
     <div class="aviso">Registrá el de cada uno por separado, aunque hayan juntado la plata.</div>
@@ -495,10 +529,47 @@ const FORMS = {
 //  6. ACCIONES
 // ════════════════════════════════════════════════════════════
 document.addEventListener('click', async e => {
-  const t = e.target.closest('[data-abrir],[data-x],[data-p],[data-g],[data-pagar],[data-deshacer],[data-v]');
+  const t = e.target.closest('[data-abrir],[data-x],[data-p],[data-g],[data-pagar],[data-deshacer],[data-v],[data-mov],[data-editar],[data-borrar],[data-actualizar]');
   if (!t) return;
 
   if (t.dataset.abrir) return abrirHoja(FORMS[t.dataset.abrir]());
+
+  if (t.dataset.mov){
+    const [tabla, id] = t.dataset.mov.split(':');
+    const fila = S[tabla === 'aportes' ? 'aportes' : 'gastos'].find(x => String(x.id) === id);
+    if (fila) abrirHoja(FORMS.verMov(tabla, fila));
+    return;
+  }
+
+  if (t.dataset.editar){
+    const p = S.plan.find(x => String(x.id) === t.dataset.editar);
+    if (p) abrirHoja(FORMS.editarPlan(p));
+    return;
+  }
+
+  if (t.dataset.borrar){
+    const [tabla, id] = t.dataset.borrar.split(':');
+    if (!confirm('¿Borrar esto? No se puede deshacer.')) return;
+    t.disabled = true;
+    if (tabla === 'gastos'){
+      await db.from('plan').update({estado:'Pendiente', gasto_id:null}).eq('gasto_id', id);
+    }
+    const { error } = await db.from(tabla).delete().eq('id', id);
+    if (error){ t.disabled = false; return alert(error.message); }
+    cerrarHoja(); return refrescar();
+  }
+
+  if (t.dataset.actualizar){
+    t.disabled = true;
+    const { error } = await db.from('plan').update({
+      detalle: $('#dE').value || null,
+      bolsa:   $('#bE').value,
+      fecha:   $('#fE').value,
+      monto:   Number($('#mE').value)
+    }).eq('id', t.dataset.actualizar);
+    if (error){ t.disabled = false; return alert(error.message); }
+    cerrarHoja(); return refrescar();
+  }
   if (t.hasAttribute('data-x')) return cerrarHoja();
 
   if (t.dataset.p){
@@ -594,8 +665,15 @@ db.auth.onAuthStateChange(async (_e, sesion) => {
   if (sesion){
     $('#login').hidden = true;
     $('#app').hidden = false; $('#nav').hidden = false;
-    try{ await refrescar(); }
-    catch(err){ console.error(err); alert('Error: ' + err.message); }
+    try{
+      await refrescar();
+      $('#aviso').hidden = true;
+    }catch(err){
+      console.error(err);
+      const a = $('#aviso');
+      a.textContent = 'No se pudieron cargar los datos: ' + err.message;
+      a.hidden = false;
+    }
   } else {
     $('#login').hidden = false;
     $('#app').hidden = true; $('#nav').hidden = true;
