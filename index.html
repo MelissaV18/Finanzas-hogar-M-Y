@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Casa</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#16302B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Casa">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papel:#FBFAF6; --tinta:#16302B; --verde:#2E6B5E; --verde-claro:#DCEAE4;
+  --ambar:#E4A11B; --ambar-claro:#FBF0D6; --rojo:#C1453B; --rojo-claro:#F7E2E0;
+  --gris:#7C8B87; --linea:#E2E5E0;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--papel);color:var(--tinta)}
+body{
+  font-family:'Bricolage Grotesque',system-ui,sans-serif;
+  font-size:16px;line-height:1.45;
+  padding:env(safe-area-inset-top) 0 calc(72px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.wrap{max-width:520px;margin:0 auto;padding:0 18px}
+button{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
+input,select{font:inherit;color:inherit;width:100%;background:#fff;
+  border:1.5px solid var(--linea);border-radius:10px;padding:13px 14px}
+input:focus,select:focus{outline:2px solid var(--verde);outline-offset:1px;border-color:transparent}
+label{display:block;font-size:13px;color:var(--gris);margin:0 0 5px 2px}
+.field{margin-bottom:14px}
+
+/* ---------- login ---------- */
+#login{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;gap:8px}
+#login h1{font-size:38px;font-weight:800;letter-spacing:-.03em}
+#login p{color:var(--gris);margin-bottom:26px}
+
+/* ---------- encabezado ---------- */
+header{padding:22px 0 6px;display:flex;align-items:baseline;justify-content:space-between}
+header h1{font-size:20px;font-weight:700;letter-spacing:-.02em}
+header button{font-size:13px;color:var(--gris);text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- hero ---------- */
+.hero{padding:14px 0 22px;border-bottom:1px solid var(--linea);margin-bottom:20px}
+.hero .lab{font-size:14px;color:var(--gris)}
+.hero .big{font-size:clamp(42px,13vw,58px);font-weight:800;letter-spacing:-.045em;line-height:1.05;margin:2px 0 16px}
+.hero .big.neg{color:var(--rojo)}
+.barra{display:flex;height:11px;border-radius:99px;overflow:hidden;background:var(--linea)}
+.barra i{display:block;height:100%}
+.barra .comp{background:var(--ambar)}
+.barra .libre{background:var(--verde)}
+.leyenda{display:flex;gap:16px;margin-top:9px;font-size:13px;color:var(--gris);flex-wrap:wrap}
+.leyenda b{color:var(--tinta);font-weight:500}
+.dot{display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:5px;vertical-align:1px}
+
+/* ---------- acciones ---------- */
+.acciones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:26px}
+.acciones button{background:var(--tinta);color:var(--papel);border-radius:var(--r);
+  padding:16px 10px;font-weight:600;font-size:15px}
+.acciones button.sec{background:#fff;color:var(--tinta);border:1.5px solid var(--linea)}
+.acciones button:active{transform:scale(.98)}
+
+/* ---------- secciones ---------- */
+section{margin-bottom:28px}
+section > h2{font-size:15px;font-weight:700;margin-bottom:3px}
+section > .sub{font-size:13px;color:var(--gris);margin-bottom:12px}
+
+.quin{border:1.5px solid var(--linea);border-radius:var(--r);padding:16px;background:#fff}
+.quin .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.quin .top strong{font-size:16px}
+.quin .top span{font-size:12px;color:var(--gris)}
+.quin dl{display:grid;grid-template-columns:1fr auto;gap:7px 12px;font-size:14px}
+.quin dt{color:var(--gris)}
+.quin dd{text-align:right}
+.quin .cierre{border-top:1px solid var(--linea);margin-top:11px;padding-top:11px;font-weight:700}
+
+/* ---------- listas ---------- */
+ul{list-style:none}
+li.item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--linea)}
+li.item:last-child{border-bottom:none}
+.tick{flex:0 0 24px;height:24px;border-radius:99px;border:2px solid var(--linea);background:#fff}
+.tick:active{transform:scale(.9)}
+.tick.on{background:var(--verde);border-color:var(--verde);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'><path d='M5 13l4 4L19 7'/></svg>");
+  background-size:15px;background-repeat:no-repeat;background-position:center}
+.item .cuerpo{flex:1;min-width:0}
+.item .t{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .m{font-size:12px;color:var(--gris)}
+.item .v{font-weight:600;white-space:nowrap}
+.item.vencido .m{color:var(--rojo)}
+.item.hecho .t{color:var(--gris);text-decoration:line-through}
+.vacio{color:var(--gris);font-size:14px;padding:16px 0;text-align:center}
+
+/* ---------- tabla del mes ---------- */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-weight:500;color:var(--gris);font-size:12px;text-align:right;padding:0 0 8px}
+th:first-child{text-align:left}
+td{padding:9px 0;border-top:1px solid var(--linea);text-align:right}
+td:first-child{text-align:left}
+tr.tot td{font-weight:700;border-top:1.5px solid var(--tinta)}
+.mal{color:var(--rojo)}
+
+/* ---------- barra inferior ---------- */
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(251,250,246,.94);
+  backdrop-filter:blur(12px);border-top:1px solid var(--linea);
+  padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav .wrap{display:grid;grid-template-columns:repeat(3,1fr)}
+nav button{padding:14px 0;font-size:13px;color:var(--gris);font-weight:500;
+  border-top:2.5px solid transparent;margin-top:-1px}
+nav button.on{color:var(--tinta);font-weight:700;border-top-color:var(--verde)}
+
+/* ---------- hoja modal ---------- */
+.velo{position:fixed;inset:0;background:rgba(22,48,43,.4);z-index:30;display:none}
+.velo.on{display:block}
+.hoja{position:fixed;left:0;right:0;bottom:0;background:var(--papel);z-index:31;
+  border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+  max-height:92dvh;overflow-y:auto;transform:translateY(100%);
+  transition:transform .26s cubic-bezier(.32,.72,0,1)}
+.hoja.on{transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){.hoja{transition:none}}
+.hoja h3{font-size:19px;font-weight:700;margin-bottom:16px}
+.hoja .guardar{width:100%;background:var(--verde);color:#fff;border-radius:12px;
+  padding:16px;font-weight:700;font-size:16px;margin-top:6px}
+.hoja .guardar:disabled{opacity:.5}
+.hoja .cerrar{width:100%;padding:13px;color:var(--gris);font-size:14px;margin-top:4px}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;border:1.5px solid var(--linea);background:#fff;border-radius:10px;
+  padding:12px 6px;font-size:15px}
+.seg button.on{background:var(--verde-claro);border-color:var(--verde);font-weight:600}
+
+.aviso{background:var(--ambar-claro);border-radius:10px;padding:12px 14px;
+  font-size:13px;margin-bottom:16px}
+.err{color:var(--rojo);font-size:14px;margin-top:10px}
+.cargando{text-align:center;color:var(--gris);padding:60px 0}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="login" class="wrap" hidden>
+  <h1>Casa</h1>
+  <p>Las cuentas de los dos.</p>
+  <div class="field"><label for="em">Correo</label>
+    <input id="em" type="email" autocomplete="username" inputmode="email"></div>
+  <div class="field"><label for="pw">Contraseña</label>
+    <input id="pw" type="password" autocomplete="current-password"></div>
+  <button id="entrar" class="guardar" style="background:var(--verde);color:#fff;border-radius:12px;padding:16px;font-weight:700;width:100%">Entrar</button>
+  <p id="loginErr" class="err" hidden></p>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app" hidden>
+  <div class="wrap">
+    <header>
+      <h1>Casa</h1>
+      <button id="salir">Salir</button>
+    </header>
+  </div>
+
+  <!-- ---- INICIO ---- -->
+  <div id="vInicio" class="wrap vista">
+    <div class="hero">
+      <div class="lab">Libre para usar</div>
+      <div class="big num" id="hLibre">—</div>
+      <div class="barra"><i class="comp" id="bComp"></i><i class="libre" id="bLibre"></i></div>
+      <div class="leyenda">
+        <span><i class="dot" style="background:var(--ambar)"></i>Comprometido <b class="num" id="hComp">—</b></span>
+        <span><i class="dot" style="background:var(--verde)"></i>Hay <b class="num" id="hHay">—</b></span>
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button data-abrir="aporte">Registrar aporte</button>
+      <button data-abrir="gasto" class="sec">Registrar gasto</button>
+    </div>
+
+    <section>
+      <h2>Esta quincena</h2>
+      <div class="sub" id="qNombre">—</div>
+      <div class="quin">
+        <dl>
+          <dt>Falta por pagar</dt><dd class="num" id="qFalta">—</dd>
+          <dt>Ya pagado</dt><dd class="num" id="qPagado">—</dd>
+          <dt id="qEntraLab">Entra</dt><dd class="num" id="qEntra">—</dd>
+        </dl>
+        <dl class="cierre"><dt id="qCierreLab">Sobra</dt><dd class="num" id="qCierre">—</dd></dl>
+      </div>
+    </section>
+
+    <section>
+      <h2>Últimos movimientos</h2>
+      <ul id="movs"></ul>
+    </section>
+  </div>
+
+  <!-- ---- PLAN ---- -->
+  <div id="vPlan" class="wrap vista" hidden>
+    <section>
+      <h2>Falta por pagar</h2>
+      <div class="sub">Tocá el círculo cuando lo paguen. Se registra como gasto solo.</div>
+      <ul id="pend"></ul>
+    </section>
+    <div class="acciones">
+      <button data-abrir="plan" style="grid-column:1/-1">Agregar algo por pagar</button>
+    </div>
+    <section>
+      <h2>Ya pagado</h2>
+      <ul id="pagados"></ul>
+    </section>
+  </div>
+
+  <!-- ---- MES ---- -->
+  <div id="vMes" class="wrap vista" hidden>
+    <section>
+      <h2>El mes</h2>
+      <div class="sub"><select id="selMes" style="margin-top:6px"></select></div>
+      <div class="quin" style="margin-bottom:20px">
+        <dl>
+          <dt>Aportes del mes</dt><dd class="num" id="mAp">—</dd>
+          <dt>Gastos del mes</dt><dd class="num" id="mGa">—</dd>
+        </dl>
+        <dl class="cierre"><dt>Resultado</dt><dd class="num" id="mRes">—</dd></dl>
+      </div>
+      <table>
+        <thead><tr><th>Bolsa</th><th>Presupuesto</th><th>Pagado</th><th>Falta</th></tr></thead>
+        <tbody id="mBolsas"></tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Quién puso qué</h2>
+      <table><tbody id="mQuien"></tbody></table>
+    </section>
+  </div>
+</div>
+
+<nav id="nav" hidden><div class="wrap">
+  <button data-v="Inicio" class="on">Inicio</button>
+  <button data-v="Plan">Por pagar</button>
+  <button data-v="Mes">El mes</button>
+</div></nav>
+
+<div class="velo" id="velo"></div>
+<div class="hoja" id="hoja"><div id="hojaBody"></div></div>
+
+<script type="module">
+// ════════════════════════════════════════════════════════════
+//  1. CONFIGURACIÓN — reemplazar con los valores de su proyecto
+//     Supabase > Project Settings > Data API
+// ════════════════════════════════════════════════════════════
+const SUPABASE_URL  = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_ANON = 'TU-CLAVE-ANON-PUBLICA';
+
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ════════════════════════════════════════════════════════════
+//  2. UTILIDADES
+// ════════════════════════════════════════════════════════════
+const $ = s => document.querySelector(s);
+const plata = n => (n<0?'−':'') + '$' + Math.abs(Math.round(n)).toLocaleString('es-CO');
+const hoy = () => new Date().toISOString().slice(0,10);
+const MES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
+             'septiembre','octubre','noviembre','diciembre'];
+
+// una quincena = del 1 al 15, o del 16 al fin de mes
+function quincena(iso){
+  const [a,m,d] = iso.split('-').map(Number);
+  const primera = d <= 15;
+  const ult = new Date(a, m, 0).getDate();
+  const p = n => String(n).padStart(2,'0');
+  return {
+    ini:  `${a}-${p(m)}-${primera?'01':'16'}`,
+    fin:  `${a}-${p(m)}-${primera?'15':ult}`,
+    nombre: `${primera?'Primera':'Segunda'} quincena de ${MES[m-1]}`
+  };
+}
+const entre = (f,a,b) => f >= a && f <= b;
+const suma  = arr => arr.reduce((t,x)=>t + Number(x.monto), 0);
+
+function fechaCorta(iso){
+  const [a,m,d] = iso.split('-').map(Number);
+  return `${d} ${MES[m-1].slice(0,3)}`;
+}
+
+// ════════════════════════════════════════════════════════════
+//  3. ESTADO
+// ════════════════════════════════════════════════════════════
+let S = { bolsas:[], personas:[], aportes:[], gastos:[], plan:[], aporteQuin:0 };
+
+async function cargar(){
+  const [b,p,c,a,g,pl] = await Promise.all([
+    db.from('bolsas').select('*').order('orden'),
+    db.from('personas').select('*').order('orden'),
+    db.from('config').select('*'),
+    db.from('aportes').select('*').order('fecha',{ascending:false}),
+    db.from('gastos').select('*').order('fecha',{ascending:false}),
+    db.from('plan').select('*').order('fecha')
+  ]);
+  const error = [b,p,c,a,g,pl].find(r=>r.error);
+  if (error) throw error.error;
+  S.bolsas = b.data; S.personas = p.data;
+  S.aportes = a.data; S.gastos = g.data; S.plan = pl.data;
+  S.aporteQuin = Number(c.data.find(x=>x.clave==='aporte_quincenal_persona')?.valor || 0);
+}
+
+// ---------- los mismos cálculos del Excel ----------
+const totalAportado = () => suma(S.aportes);
+const gastadoFondo  = () => suma(S.gastos.filter(g=>g.origen==='Fondo común'));
+const plataHoy      = () => totalAportado() - gastadoFondo();
+const pendientes    = () => S.plan.filter(p=>p.estado==='Pendiente');
+const vencidas      = () => suma(pendientes().filter(p=>p.fecha < hoy()));
+const libre         = () => plataHoy() - vencidas();
+
+// ════════════════════════════════════════════════════════════
+//  4. PINTAR
+// ════════════════════════════════════════════════════════════
+function pintar(){
+  const hay = plataHoy(), comp = vencidas(), lib = libre();
+
+  $('#hLibre').textContent = plata(lib);
+  $('#hLibre').classList.toggle('neg', lib < 0);
+  $('#hHay').textContent  = plata(hay);
+  $('#hComp').textContent = plata(comp);
+  const base = Math.max(hay, comp, 1);
+  $('#bComp').style.width  = (Math.min(comp,base)/base*100) + '%';
+  $('#bLibre').style.width = (Math.max(lib,0)/base*100) + '%';
+
+  // ---- quincena en curso ----
+  const q = quincena(hoy());
+  const falta  = suma(pendientes().filter(p=>entre(p.fecha,q.ini,q.fin)));
+  const pagado = suma(S.gastos.filter(g=>entre(g.fecha,q.ini,q.fin)));
+  const real   = suma(S.aportes.filter(a=>entre(a.fecha,q.ini,q.fin)));
+  const esperado = S.aporteQuin * S.personas.length;
+  const entra  = real > 0 ? real : esperado;
+  const cierre = entra - falta - pagado;
+
+  $('#qNombre').textContent = q.nombre;
+  $('#qFalta').textContent  = plata(falta);
+  $('#qPagado').textContent = plata(pagado);
+  $('#qEntra').textContent  = plata(entra);
+  $('#qEntraLab').textContent = real > 0 ? 'Entró' : 'Debería entrar';
+  $('#qCierreLab').textContent = cierre < 0 ? 'Falta' : 'Sobra';
+  $('#qCierre').textContent = plata(cierre);
+  $('#qCierre').className = 'num' + (cierre < 0 ? ' mal' : '');
+
+  // ---- movimientos recientes ----
+  const movs = [
+    ...S.aportes.map(a=>({f:a.fecha, t:`Aporte de ${a.persona}`, m:a.monto, mas:true})),
+    ...S.gastos .map(g=>({f:g.fecha, t:g.detalle || g.bolsa, m:g.monto, mas:false, sub:g.bolsa}))
+  ].sort((x,y)=> y.f.localeCompare(x.f)).slice(0,12);
+
+  $('#movs').innerHTML = movs.length ? movs.map(m=>`
+    <li class="item">
+      <div class="cuerpo">
+        <div class="t">${esc(m.t)}</div>
+        <div class="m">${fechaCorta(m.f)}${m.sub?' · '+esc(m.sub):''}</div>
+      </div>
+      <div class="v" style="color:${m.mas?'var(--verde)':'inherit'}">
+        ${m.mas?'+':'−'}${plata(m.m).replace('−','')}</div>
+    </li>`).join('') : '<li class="vacio">Todavía no hay movimientos.</li>';
+
+  pintarPlan();
+  pintarMes();
+}
+
+function pintarPlan(){
+  const pend = pendientes();
+  $('#pend').innerHTML = pend.length ? pend.map(p=>`
+    <li class="item ${p.fecha < hoy() ? 'vencido':''}">
+      <button class="tick" data-pagar="${p.id}" aria-label="Marcar pagado"></button>
+      <div class="cuerpo">
+        <div class="t">${esc(p.detalle||p.bolsa)}</div>
+        <div class="m">${fechaCorta(p.fecha)}${p.fecha<hoy()?' · vencida':''} · ${esc(p.bolsa)}</div>
+      </div>
+      <div class="v">${plata(p.monto)}</div>
+    </li>`).join('') : '<li class="vacio">No falta nada por pagar.</li>';
+
+  const hechos = S.plan.filter(p=>p.estado==='Pagado').slice(-10).reverse();
+  $('#pagados').innerHTML = hechos.length ? hechos.map(p=>`
+    <li class="item hecho">
+      <button class="tick on" data-deshacer="${p.id}" aria-label="Volver a pendiente"></button>
+      <div class="cuerpo">
+        <div class="t">${esc(p.detalle||p.bolsa)}</div>
+        <div class="m">${fechaCorta(p.fecha)}</div>
+      </div>
+      <div class="v">${plata(p.monto)}</div>
+    </li>`).join('') : '<li class="vacio">Nada pagado todavía.</li>';
+}
+
+function pintarMes(){
+  const sel = $('#selMes');
+  if (!sel.options.length){
+    const set = new Set([...S.aportes,...S.gastos,...S.plan].map(x=>x.fecha.slice(0,7)));
+    set.add(hoy().slice(0,7));
+    [...set].sort().reverse().forEach(ym=>{
+      const [a,m] = ym.split('-');
+      sel.add(new Option(`${MES[+m-1]} ${a}`, ym));
+    });
+    sel.value = hoy().slice(0,7);
+  }
+  const ym = sel.value, ini = ym+'-01';
+  const [a,m] = ym.split('-').map(Number);
+  const fin = `${ym}-${new Date(a,m,0).getDate()}`;
+
+  const ap = suma(S.aportes.filter(x=>entre(x.fecha,ini,fin)));
+  const ga = suma(S.gastos .filter(x=>entre(x.fecha,ini,fin)));
+  $('#mAp').textContent = plata(ap);
+  $('#mGa').textContent = plata(ga);
+  $('#mRes').textContent = plata(ap-ga);
+  $('#mRes').className = 'num' + (ap-ga<0?' mal':'');
+
+  $('#mBolsas').innerHTML = S.bolsas.map(b=>{
+    const pres = Number(b.presupuesto);
+    const pag  = suma(S.gastos.filter(g=>g.bolsa===b.nombre && entre(g.fecha,ini,fin)));
+    const fal  = suma(pendientes().filter(p=>p.bolsa===b.nombre && entre(p.fecha,ini,fin)));
+    const sob  = pres - pag - fal;
+    return `<tr><td>${esc(b.nombre)}</td><td class="num">${plata(pres)}</td>
+      <td class="num">${plata(pag)}</td>
+      <td class="num${sob<0?' mal':''}">${plata(fal)}</td></tr>`;
+  }).join('');
+
+  $('#mQuien').innerHTML = S.personas.map(p=>{
+    const mes = suma(S.aportes.filter(x=>x.persona===p.nombre && entre(x.fecha,ini,fin)));
+    const tot = suma(S.aportes.filter(x=>x.persona===p.nombre));
+    return `<tr><td>${esc(p.nombre)}</td><td class="num">${plata(mes)}</td>
+      <td class="num" style="color:var(--gris)">${plata(tot)} total</td></tr>`;
+  }).join('');
+}
+
+const esc = s => String(s??'').replace(/[&<>"]/g, c=>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// ════════════════════════════════════════════════════════════
+//  5. HOJA MODAL
+// ════════════════════════════════════════════════════════════
+function abrirHoja(html){
+  $('#hojaBody').innerHTML = html;
+  $('#velo').classList.add('on');
+  requestAnimationFrame(()=> $('#hoja').classList.add('on'));
+}
+function cerrarHoja(){
+  $('#hoja').classList.remove('on');
+  $('#velo').classList.remove('on');
+}
+$('#velo').onclick = cerrarHoja;
+
+const optBolsas = () => S.bolsas.map(b=>`<option>${esc(b.nombre)}</option>`).join('');
+
+const FORMS = {
+  aporte: () => `
+    <h3>Registrar aporte</h3>
+    <div class="aviso">Registrá el de cada uno por separado, aunque hayan juntado la plata.</div>
+    <div class="field"><label>Quién</label>
+      <div class="seg" id="segP">${S.personas.map((p,i)=>
+        `<button data-p="${esc(p.nombre)}" class="${i?'':'on'}">${esc(p.nombre)}</button>`).join('')}</div></div>
+    <div class="field"><label for="fA">Fecha</label><input id="fA" type="date" value="${hoy()}"></div>
+    <div class="field"><label for="mA">Cuánto</label>
+      <input id="mA" type="number" inputmode="numeric" placeholder="391000" value="${S.aporteQuin||''}"></div>
+    <button class="guardar" data-g="aporte">Guardar aporte</button>
+    <button class="cerrar" data-x>Cancelar</button>`,
+
+  gasto: () => `
+    <h3>Registrar gasto</h3>
+    <div class="field"><label for="dG">Qué fue</label><input id="dG" placeholder="Mercado del sábado"></div>
+    <div class="field"><label for="bG">Bolsa</label><select id="bG">${optBolsas()}</select></div>
+    <div class="field"><label for="fG">Fecha</label><input id="fG" type="date" value="${hoy()}"></div>
+    <div class="field"><label for="mG">Cuánto</label>
+      <input id="mG" type="number" inputmode="numeric" placeholder="0"></div>
+    <div class="field"><label for="oG">Salió de</label><select id="oG">
+      <option>Fondo común</option>${S.personas.map(p=>
+        `<option>${esc(p.nombre)}</option>`).join('')}</select></div>
+    <button class="guardar" data-g="gasto">Guardar gasto</button>
+    <button class="cerrar" data-x>Cancelar</button>`,
+
+  plan: () => `
+    <h3>Agregar algo por pagar</h3>
+    <div class="field"><label for="dP">Qué es</label><input id="dP" placeholder="Certificación de gas"></div>
+    <div class="field"><label for="bP">Bolsa</label><select id="bP">${optBolsas()}</select></div>
+    <div class="field"><label for="fP">Para cuándo</label><input id="fP" type="date" value="${hoy()}"></div>
+    <div class="field"><label for="mP">Cuánto</label>
+      <input id="mP" type="number" inputmode="numeric" placeholder="0"></div>
+    <button class="guardar" data-g="plan">Guardar</button>
+    <button class="cerrar" data-x>Cancelar</button>`
+};
+
+// ════════════════════════════════════════════════════════════
+//  6. ACCIONES
+// ════════════════════════════════════════════════════════════
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-abrir],[data-x],[data-p],[data-g],[data-pagar],[data-deshacer],[data-v]');
+  if (!t) return;
+
+  if (t.dataset.abrir) return abrirHoja(FORMS[t.dataset.abrir]());
+  if (t.hasAttribute('data-x')) return cerrarHoja();
+
+  if (t.dataset.p){
+    [...t.parentElement.children].forEach(b=>b.classList.remove('on'));
+    t.classList.add('on'); return;
+  }
+
+  if (t.dataset.v){
+    document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b===t));
+    document.querySelectorAll('.vista').forEach(v=>v.hidden = true);
+    $('#v'+t.dataset.v).hidden = false;
+    scrollTo({top:0}); return;
+  }
+
+  // ---- guardar ----
+  if (t.dataset.g){
+    t.disabled = true;
+    try{
+      if (t.dataset.g === 'aporte'){
+        const persona = $('#segP .on').dataset.p;
+        const monto = Number($('#mA').value);
+        if (!monto) throw new Error('Falta el monto.');
+        await ins('aportes', { fecha:$('#fA').value, persona, monto });
+      }
+      if (t.dataset.g === 'gasto'){
+        const monto = Number($('#mG').value);
+        if (!monto) throw new Error('Falta el monto.');
+        await ins('gastos', { fecha:$('#fG').value, bolsa:$('#bG').value,
+          detalle:$('#dG').value || null, monto, origen:$('#oG').value });
+      }
+      if (t.dataset.g === 'plan'){
+        const monto = Number($('#mP').value);
+        if (!monto) throw new Error('Falta el monto.');
+        await ins('plan', { fecha:$('#fP').value, bolsa:$('#bP').value,
+          detalle:$('#dP').value || null, monto });
+      }
+      cerrarHoja(); await refrescar();
+    }catch(err){
+      t.disabled = false;
+      let p = $('#hojaBody .err');
+      if (!p){ p = document.createElement('p'); p.className='err'; $('#hojaBody').append(p); }
+      p.textContent = err.message;
+    }
+    return;
+  }
+
+  // ---- marcar pagado: crea el gasto y enlaza ----
+  if (t.dataset.pagar){
+    const p = S.plan.find(x=>String(x.id)===t.dataset.pagar);
+    t.classList.add('on');
+    const { data, error } = await db.from('gastos').insert({
+      fecha:hoy(), bolsa:p.bolsa, detalle:p.detalle, monto:p.monto,
+      origen:'Fondo común', notas:'Venía del plan'
+    }).select().single();
+    if (error) return alert(error.message);
+    await db.from('plan').update({estado:'Pagado', gasto_id:data.id}).eq('id',p.id);
+    return refrescar();
+  }
+
+  // ---- deshacer: borra el gasto que había creado ----
+  if (t.dataset.deshacer){
+    const p = S.plan.find(x=>String(x.id)===t.dataset.deshacer);
+    if (p.gasto_id) await db.from('gastos').delete().eq('id', p.gasto_id);
+    await db.from('plan').update({estado:'Pendiente', gasto_id:null}).eq('id',p.id);
+    return refrescar();
+  }
+});
+
+async function ins(tabla, fila){
+  const { error } = await db.from(tabla).insert(fila);
+  if (error) throw error;
+}
+async function refrescar(){ await cargar(); pintar(); }
+$('#selMes').onchange = pintarMes;
+
+// ════════════════════════════════════════════════════════════
+//  7. SESIÓN
+// ════════════════════════════════════════════════════════════
+$('#entrar').onclick = async () => {
+  const btn = $('#entrar'); btn.disabled = true;
+  const { error } = await db.auth.signInWithPassword({
+    email: $('#em').value.trim(), password: $('#pw').value });
+  btn.disabled = false;
+  if (error){
+    $('#loginErr').textContent = 'No pudimos entrar. Revisá el correo y la contraseña.';
+    $('#loginErr').hidden = false;
+  }
+};
+$('#pw').addEventListener('keydown', e => { if (e.key==='Enter') $('#entrar').click(); });
+$('#salir').onclick = () => db.auth.signOut();
+
+db.auth.onAuthStateChange(async (_e, sesion) => {
+  if (sesion){
+    $('#login').hidden = true;
+    $('#app').hidden = false; $('#nav').hidden = false;
+    try{ await refrescar(); }
+    catch(err){ $('#vInicio').innerHTML =
+      `<p class="err">No se pudieron cargar los datos: ${esc(err.message)}</p>`; }
+  } else {
+    $('#login').hidden = false;
+    $('#app').hidden = true; $('#nav').hidden = true;
+  }
+});
+</script>
+</body>
+</html>
