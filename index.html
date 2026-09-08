@@ -200,12 +200,12 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
   <!-- ---- INICIO ---- -->
   <div id="vInicio" class="wrap vista">
     <div class="hero">
-      <div class="lab">Libre para usar</div>
+      <div class="lab">Hay guardado</div>
       <div class="big num" id="hLibre">—</div>
       <div class="barra"><i class="comp" id="bComp"></i><i class="libre" id="bLibre"></i></div>
       <div class="leyenda">
-        <span><i class="dot" style="background:var(--ambar)"></i>Ya tiene dueño <b class="num" id="hComp">—</b></span>
-        <span><i class="dot" style="background:var(--verde)"></i>Hay <b class="num" id="hHay">—</b></span>
+        <span><i class="dot" style="background:var(--ambar-vivo)"></i>Con destino <b class="num" id="hComp">—</b></span>
+        <span><i class="dot" style="background:var(--verde-vivo)"></i>Sin asignar <b class="num" id="hHay">—</b></span>
       </div>
     </div>
 
@@ -219,24 +219,12 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
       <div class="sub" id="qNombre">—</div>
       <div class="quin">
         <dl>
-          <dt>Falta por pagar</dt><dd class="num" id="qFalta">—</dd>
+          <dt>Le toca apartar</dt><dd class="num" id="qToca">—</dd>
           <dt>Ya pagado</dt><dd class="num" id="qPagado">—</dd>
+          <dt>Falta por pagar</dt><dd class="num" id="qFalta">—</dd>
           <dt id="qEntraLab">Entra</dt><dd class="num" id="qEntra">—</dd>
         </dl>
         <dl class="cierre"><dt id="qCierreLab">Sobra</dt><dd class="num" id="qCierre">—</dd></dl>
-      </div>
-    </section>
-
-    <section>
-      <h2>Todo lo que falta por pagar</h2>
-      <div class="sub">El panorama completo, más allá de esta quincena.</div>
-      <div class="quin alt">
-        <dl>
-          <dt>Vencido</dt><dd class="num" id="tVenc">—</dd>
-          <dt id="tQuinLab">Esta quincena</dt><dd class="num" id="tQuin">—</dd>
-          <dt>Más adelante</dt><dd class="num" id="tDesp">—</dd>
-        </dl>
-        <dl class="cierre"><dt>Total</dt><dd class="num" id="tTot">—</dd></dl>
       </div>
     </section>
 
@@ -250,15 +238,22 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
   <!-- ---- PLAN ---- -->
   <div id="vPlan" class="wrap vista" hidden>
     <section>
-      <h2>Falta por pagar</h2>
-      <div class="sub">Tocá el círculo cuando lo paguen. Tocá el nombre para cambiarlo o borrarlo.</div>
-      <ul id="pend"></ul>
+      <h2>Las bolsas</h2>
+      <div class="sub">Cuánto llevan guardado en cada una y cuánto aparta cada quincena.</div>
+      <ul id="bolsas"></ul>
     </section>
-    <div class="acciones">
-      <button data-abrir="plan" style="grid-column:1/-1">Agregar algo por pagar</button>
-    </div>
+
     <section>
-      <h2>Ya pagado</h2>
+      <h2>Gastos extra</h2>
+      <div class="sub">Lo que no es del mes a mes. Tocá el círculo al pagarlo, o el nombre para cambiarlo.</div>
+      <ul id="pend"></ul>
+      <div class="acciones" style="margin-top:16px">
+        <button data-abrir="plan" style="grid-column:1/-1">Agregar un gasto extra</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Extras ya pagados</h2>
       <ul id="pagados"></ul>
     </section>
   </div>
@@ -289,7 +284,7 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 
 <nav id="nav" hidden><div class="wrap">
   <button data-v="Inicio" class="on">Inicio</button>
-  <button data-v="Plan">Por pagar</button>
+  <button data-v="Plan">Bolsas</button>
   <button data-v="Mes">El mes</button>
 </div></nav>
 
@@ -301,8 +296,8 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 //  1. CONFIGURACIÓN — reemplazar con los valores de su proyecto
 //     Supabase > Project Settings > Data API
 // ════════════════════════════════════════════════════════════
-const SUPABASE_URL  = 'https://bdcvwakbiwgkldrqsjdo.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_n9YV58SpbRTeeT4rrnellg_VS2_J524';
+const SUPABASE_URL  = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_ANON = 'TU-CLAVE-ANON-PUBLICA';
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -366,40 +361,51 @@ const totalAportado = () => suma(S.aportes);
 const gastadoFondo  = () => suma(S.gastos.filter(g=>g.origen==='Fondo común'));
 const plataHoy      = () => totalAportado() - gastadoFondo();
 const pendientes    = () => S.plan.filter(p=>p.estado==='Pendiente');
-// lo que hay que pagar con la plata que ya está: vencido + lo que cae
-// antes de que entre la próxima quincena
-const comprometido = () => {
-  const fin = quincena(hoy()).fin;
-  return suma(pendientes().filter(p => p.fecha <= fin));
+// ---- modelo de bolsas ----
+// cada bolsa aparta la mitad de su presupuesto mensual en cada quincena
+const cuotaQ      = b  => Number(b.presupuesto) / 2;
+const cuotaTotalQ = () => S.bolsas.reduce((t,b) => t + cuotaQ(b), 0);
+
+// lo aportado se reparte entre las bolsas según el peso de su cuota
+const guardadoEn = b => {
+  const tot = cuotaTotalQ();
+  if (!tot) return 0;
+  const leCorresponde = totalAportado() * (cuotaQ(b) / tot);
+  const gastado = suma(S.gastos.filter(g => g.bolsa === b.nombre));
+  return leCorresponde - gastado;
 };
-const libre = () => plataHoy() - comprometido();
+
+// los gastos extra pendientes son plata que ya tiene destino
+const conDestino = () => suma(pendientes());
 
 // ════════════════════════════════════════════════════════════
 //  4. PINTAR
 // ════════════════════════════════════════════════════════════
 function pintar(){
-  const hay = plataHoy(), comp = comprometido(), lib = libre();
+  const hay = plataHoy(), comp = conDestino(), lib = hay - comp;
 
-  txt('#hLibre', plata(lib));
-  $('#hLibre')?.classList.toggle('neg', lib < 0);
-  txt('#hHay',  plata(hay));
+  txt('#hLibre', plata(hay));
+  $('#hLibre')?.classList.toggle('neg', hay < 0);
+  txt('#hHay',  plata(lib));
   txt('#hComp', plata(comp));
-  const base = Math.max(hay, comp, 1);
+  const base = Math.max(hay, 1);
   ancho('#bComp',  (Math.min(comp,base)/base*100) + '%');
   ancho('#bLibre', (Math.max(lib,0)/base*100) + '%');
 
   // ---- quincena en curso ----
   const q = quincena(hoy());
-  const falta  = suma(pendientes().filter(p=>entre(p.fecha,q.ini,q.fin)));
+  const toca   = cuotaTotalQ();
   const pagado = suma(S.gastos.filter(g=>entre(g.fecha,q.ini,q.fin)));
+  const falta  = Math.max(toca - pagado, 0);
   const real   = suma(S.aportes.filter(a=>entre(a.fecha,q.ini,q.fin)));
   const esperado = S.aporteQuin * S.personas.length;
   const entra  = real > 0 ? real : esperado;
-  const cierre = entra - falta - pagado;
+  const cierre = entra - toca;
 
   txt('#qNombre', q.nombre);
-  txt('#qFalta',  plata(falta));
+  txt('#qToca',   plata(toca));
   txt('#qPagado', plata(pagado));
+  txt('#qFalta',  plata(falta));
   txt('#qEntra',  plata(entra));
   txt('#qEntraLab',  real > 0 ? 'Entró' : 'Debería entrar');
   txt('#qCierreLab', cierre < 0 ? 'Falta' : 'Sobra');
@@ -440,6 +446,19 @@ function pintar(){
 }
 
 function pintarPlan(){
+  html('#bolsas', S.bolsas.map(b=>{
+    const g = guardadoEn(b), c = cuotaQ(b);
+    return `<li class="item">
+      <div class="cuerpo">
+        <div class="t">${esc(b.nombre)}</div>
+        <div class="m">aparta ${plata(c)} por quincena</div>
+      </div>
+      <div class="v"${g<0?' style="color:var(--rojo)"':''}>${plata(g)}</div>
+    </li>`;
+  }).join('') + `<li class="item" style="border-top:2px solid var(--tinta);border-bottom:none">
+      <div class="cuerpo"><div class="t" style="font-weight:700">Total por quincena</div></div>
+      <div class="v">${plata(cuotaTotalQ())}</div></li>`);
+
   const pend = pendientes();
   html('#pend', pend.length ? pend.map(p=>`
     <li class="item ${p.fecha < hoy() ? 'vencido':''}">
@@ -449,7 +468,7 @@ function pintarPlan(){
         <div class="m">${fechaCorta(p.fecha)}${p.fecha<hoy()?' · vencida':''} · ${esc(p.bolsa)}</div>
       </div>
       <div class="v">${plata(p.monto)}</div>
-    </li>`).join('') : '<li class="vacio">No falta nada por pagar.</li>');
+    </li>`).join('') : '<li class="vacio">Ningún gasto extra pendiente.</li>');
 
   const hechos = S.plan.filter(p=>p.estado==='Pagado').slice(-10).reverse();
   html('#pagados', hechos.length ? hechos.map(p=>`
