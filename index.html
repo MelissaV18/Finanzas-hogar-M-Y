@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Casa</title>
+<title>Finanzas Hogar Meli y Yobin</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#16302B">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,106 +16,117 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --papel:#FAF8F3; --crema:#FFFFFF;
-  --tinta:#14312A; --tinta-2:#1E453C;
-  --verde:#2E6B5E; --verde-vivo:#7BC9AE; --verde-suave:#E7F1EC;
-  --ambar:#D99414; --ambar-vivo:#F0B94A; --ambar-suave:#FCF3E0;
-  --rojo:#B93E33; --rojo-vivo:#FF9A8F; --rojo-suave:#FBE8E5;
-  --gris:#7A8C86; --gris-2:#9AA8A3; --linea:#E6E9E4;
+  --papel:#F3F6FA; --crema:#FFFFFF;
+  --tinta:#16324F; --azul:#2C5F92; --azul-2:#4A87C4;
+  --azul-vivo:#8FC7F5; --azul-suave:#E4EEF8; --azul-borde:#CFDDEC;
+  --gris:#64758A; --gris-2:#8C9BAD; --linea:#DFE6EE;
+  --ambar:#D9922B; --ambar-vivo:#F5B959; --ambar-suave:#FBF1DF;
+  --verde:#2E7D62; --verde-vivo:#6FCBA6;
+  --rojo:#C0504A; --rojo-vivo:#FF9E96; --rojo-suave:#FBE7E5;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{background:var(--papel)}
 body{
   background:var(--papel);color:var(--tinta);
   font-family:'Bricolage Grotesque',system-ui,sans-serif;
-  font-size:16px;line-height:1.45;font-optical-sizing:auto;
+  font-size:clamp(15.5px,4.1vw,17px);line-height:1.5;font-optical-sizing:auto;
   padding:env(safe-area-inset-top) 0 calc(80px + env(safe-area-inset-bottom));
   -webkit-font-smoothing:antialiased;
 }
 .num{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.wrap{max-width:540px;margin:0 auto;padding:0 18px}
+.wrap{max-width:560px;margin:0 auto;padding:0 clamp(14px,4.2vw,20px)}
+@media(min-width:820px){
+  .wrap{max-width:660px}
+  body{font-size:17px}
+}
 button{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
-:focus-visible{outline:2.5px solid var(--verde);outline-offset:2px;border-radius:4px}
+:focus-visible{outline:2.5px solid var(--azul-2);outline-offset:2px;border-radius:4px}
 
 input,select{font:inherit;color:inherit;width:100%;background:var(--crema);
   border:1.5px solid var(--linea);border-radius:12px;padding:14px}
-input:focus,select:focus{outline:none;border-color:var(--verde);
-  box-shadow:0 0 0 3px var(--verde-suave)}
+input:focus,select:focus{outline:none;border-color:var(--azul-2);
+  box-shadow:0 0 0 3px var(--azul-suave)}
 label{display:block;font-size:13px;font-weight:500;color:var(--gris);margin:0 0 6px 3px}
 .field{margin-bottom:15px}
 
 /* ═══ login ═══ */
 #login{min-height:100dvh;display:flex;flex-direction:column;justify-content:center}
-#login h1{font-size:44px;font-weight:800;letter-spacing:-.04em;line-height:1}
+#login h1{font-size:clamp(34px,11vw,48px);font-weight:800;letter-spacing:-.04em;line-height:1.02}
 #login p{color:var(--gris);margin:8px 0 30px}
-#login .guardar{background:var(--tinta);color:var(--papel);width:100%;
+#login .guardar{background:var(--azul);color:var(--papel);width:100%;
   border-radius:14px;padding:17px;font-weight:700;font-size:16px}
 
 /* ═══ encabezado ═══ */
 header{padding:20px 0 14px;display:flex;align-items:center;justify-content:space-between}
-header h1{font-size:19px;font-weight:800;letter-spacing:-.02em}
+header h1{font-size:clamp(17px,4.7vw,21px);font-weight:800;letter-spacing:-.025em;line-height:1.15}
+header{align-items:flex-start}
+#ver{font-size:10px;font-weight:700;color:#fff;background:var(--azul-2);
+  padding:2px 7px;border-radius:99px;vertical-align:3px;margin-left:4px}
 header button{font-size:13px;color:var(--gris);padding:6px 2px}
 
 /* ═══ HERO — panel oscuro, lo primero que se ve ═══ */
-.hero{background:var(--tinta);color:var(--papel);border-radius:22px;
-  padding:24px 22px 22px;margin-bottom:14px}
-.hero .lab{font-size:14px;font-weight:500;color:rgba(250,248,243,.62)}
-.hero .big{font-size:clamp(44px,14vw,62px);font-weight:800;letter-spacing:-.05em;
-  line-height:1.02;margin:4px 0 20px;color:var(--verde-vivo)}
+.hero.chico{padding:20px 22px}
+.hero.chico .big{font-size:clamp(28px,9vw,46px);margin:3px 0 7px}
+.hero{background:linear-gradient(160deg,#1D4771,#16324F);color:#fff;border-radius:22px;
+  padding:clamp(19px,5vw,26px) clamp(17px,4.6vw,24px);margin-bottom:14px}
+.hero .lab{font-size:clamp(13.5px,3.6vw,15.5px);font-weight:600;color:var(--azul-vivo)}
+.hero .big{font-size:clamp(33px,11.2vw,58px);font-weight:800;letter-spacing:-.045em;
+  line-height:1.02;margin:5px 0 20px;color:#FFFFFF}
 .hero .big.neg{color:var(--rojo-vivo)}
-.barra{display:flex;height:9px;border-radius:99px;overflow:hidden;
-  background:rgba(250,248,243,.16)}
+.barra{display:flex;height:10px;border-radius:99px;overflow:hidden;
+  background:rgba(255,255,255,.18)}
 .barra i{display:block;height:100%;transition:width .4s ease}
 .barra .comp{background:var(--ambar-vivo)}
-.barra .libre{background:var(--verde-vivo)}
+.barra .libre{background:var(--azul-vivo)}
 @media (prefers-reduced-motion:reduce){.barra i{transition:none}}
-.leyenda{display:flex;gap:18px;margin-top:13px;font-size:13px;flex-wrap:wrap;
-  color:rgba(250,248,243,.62)}
-.leyenda b{color:var(--papel);font-weight:600;margin-left:3px}
+.leyenda{display:flex;gap:8px 18px;margin-top:14px;font-size:clamp(12.5px,3.4vw,14.5px);
+  flex-wrap:wrap;color:rgba(255,255,255,.78)}
+.leyenda b{color:#fff;font-weight:700;margin-left:4px}
 .dot{display:inline-block;width:7px;height:7px;border-radius:99px;margin-right:6px;vertical-align:1.5px}
 
 /* ═══ acciones ═══ */
 .acciones{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:32px}
-.acciones button{background:var(--verde);color:#fff;border-radius:15px;
-  padding:17px 10px;font-weight:700;font-size:15px;letter-spacing:-.01em}
+.acciones button{background:var(--azul);color:#fff;border-radius:15px;
+  padding:clamp(14px,4vw,18px) 8px;font-weight:700;
+  font-size:clamp(13.5px,3.7vw,15.5px);letter-spacing:-.01em}
 .acciones button.sec{background:var(--crema);color:var(--tinta);
   border:1.5px solid var(--linea)}
 .acciones button:active{transform:scale(.97)}
 
 /* ═══ secciones ═══ */
 section{margin-bottom:30px}
-section > h2{font-size:19px;font-weight:800;letter-spacing:-.025em;margin-bottom:2px}
-section > .sub{font-size:13.5px;color:var(--gris);margin-bottom:14px;line-height:1.4}
+section > h2{font-size:clamp(16.5px,4.5vw,20px);font-weight:800;letter-spacing:-.025em;margin-bottom:3px}
+section > .sub{font-size:clamp(12.5px,3.4vw,14.5px);color:var(--gris);margin-bottom:14px;line-height:1.45}
 
 /* tarjeta de cifras */
 .quin{background:var(--crema);border:1.5px solid var(--linea);
-  border-radius:18px;padding:6px 18px 16px}
-.quin.alt{background:var(--verde-suave);border-color:transparent}
-.quin dl{display:grid;grid-template-columns:1fr auto;font-size:15px}
-.quin dt{color:var(--gris);padding:11px 0}
-.quin dd{text-align:right;padding:11px 0 11px 14px;font-weight:500}
+  border-radius:18px;padding:4px clamp(15px,4vw,20px) 14px}
+.quin.alt{background:var(--azul-suave);border-color:transparent}
+.quin dl{display:grid;grid-template-columns:1fr auto;font-size:clamp(14px,3.8vw,16px)}
+.quin dt{color:var(--gris);padding:clamp(9px,2.7vw,12px) 0}
+.quin dd{text-align:right;padding:clamp(9px,2.7vw,12px) 0 clamp(9px,2.7vw,12px) 12px;font-weight:600}
 .quin dt:not(:first-of-type),.quin dd:not(:first-of-type){border-top:1px solid var(--linea)}
-.quin.alt dt:not(:first-of-type),.quin.alt dd:not(:first-of-type){border-top-color:rgba(46,107,94,.16)}
-.quin .cierre{margin-top:4px;border-top:2px solid var(--tinta);font-size:16.5px}
+.quin.alt dt:not(:first-of-type),.quin.alt dd:not(:first-of-type){border-top-color:var(--azul-borde)}
+.quin .cierre{margin-top:4px;border-top:2px solid var(--tinta);font-size:clamp(15px,4.1vw,17.5px)}
 .quin .cierre dt{font-weight:700;color:var(--tinta);border:none}
 .quin .cierre dd{font-weight:800;border:none;letter-spacing:-.03em}
 
 /* ═══ listas ═══ */
 ul{list-style:none}
-li.item{display:flex;align-items:center;gap:13px;padding:14px 0;
+li.item{display:flex;align-items:center;gap:clamp(10px,3vw,14px);padding:clamp(12px,3.4vw,15px) 0;
   border-bottom:1px solid var(--linea)}
 li.item:last-child{border-bottom:none}
 li.item[data-mov]{cursor:pointer}
 .tick{flex:0 0 26px;height:26px;border-radius:99px;border:2.5px solid var(--gris-2);
   background:var(--crema);transition:transform .15s}
 .tick:active{transform:scale(.88)}
-.tick.on{background:var(--verde);border-color:var(--verde);
+.tick.on{background:var(--azul);border-color:var(--azul);
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'><path d='M5 13l4 4L19 7'/></svg>");
   background-size:15px;background-repeat:no-repeat;background-position:center}
 .item .cuerpo{flex:1;min-width:0}
-.item .t{font-size:15.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item .m{font-size:12.5px;color:var(--gris);margin-top:1px}
-.item .v{font-weight:700;white-space:nowrap;font-size:15.5px;letter-spacing:-.02em}
+.item .t{font-size:clamp(14.5px,3.9vw,16px);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .m{font-size:clamp(11.5px,3.1vw,13px);color:var(--gris);margin-top:2px}
+.item .v{font-weight:700;white-space:nowrap;font-size:clamp(14.5px,3.9vw,16.5px);letter-spacing:-.025em}
 .item.vencido{border-left:3px solid var(--rojo);padding-left:11px;
   margin-left:-14px;background:linear-gradient(90deg,var(--rojo-suave),transparent 55%)}
 .item.vencido .m{color:var(--rojo);font-weight:500}
@@ -125,10 +136,13 @@ li.item[data-mov]{cursor:pointer}
   background:var(--crema);border-radius:14px;border:1px dashed var(--linea)}
 
 /* ═══ tabla del mes ═══ */
-table{width:100%;border-collapse:collapse;font-size:14.5px}
-th{font-weight:500;color:var(--gris);font-size:12px;text-align:right;padding:0 0 9px}
+table{width:100%;border-collapse:collapse;font-size:clamp(12.5px,3.45vw,15px);
+  table-layout:fixed}
+table td:first-child,table th:first-child{width:34%;padding-right:6px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+th{font-weight:600;color:var(--gris);font-size:clamp(10.5px,2.85vw,12px);text-align:right;padding:0 0 9px}
 th:first-child{text-align:left}
-td{padding:11px 0;border-top:1px solid var(--linea);text-align:right;font-weight:500}
+td{padding:clamp(9px,2.6vw,12px) 0;border-top:1px solid var(--linea);text-align:right;font-weight:600}
 td:first-child{text-align:left;font-weight:400}
 tr.tot td{font-weight:800;border-top:2px solid var(--tinta)}
 .mal{color:var(--rojo)}
@@ -138,11 +152,11 @@ nav{position:fixed;left:0;right:0;bottom:0;background:rgba(250,248,243,.93);
   backdrop-filter:blur(16px);border-top:1px solid var(--linea);
   padding-bottom:env(safe-area-inset-bottom);z-index:20}
 nav .wrap{display:grid;grid-template-columns:repeat(3,1fr);padding:0}
-nav button{padding:15px 0 16px;font-size:13px;color:var(--gris);font-weight:600;
-  position:relative}
+nav button{padding:clamp(13px,3.6vw,16px) 0;font-size:clamp(12px,3.3vw,14px);
+  color:var(--gris);font-weight:600;position:relative}
 nav button.on{color:var(--tinta);font-weight:800}
 nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:34px;height:3px;background:var(--verde);border-radius:0 0 3px 3px}
+  width:34px;height:3px;background:var(--azul-2);border-radius:0 0 3px 3px}
 
 /* ═══ hoja modal ═══ */
 .velo{position:fixed;inset:0;background:rgba(20,49,42,.45);z-index:30;display:none}
@@ -155,8 +169,8 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 .hoja::before{content:'';display:block;width:38px;height:4px;border-radius:99px;
   background:var(--linea);margin:0 auto 16px}
 @media (prefers-reduced-motion:reduce){.hoja{transition:none}}
-.hoja h3{font-size:21px;font-weight:800;letter-spacing:-.025em;margin-bottom:18px}
-.hoja .guardar{width:100%;background:var(--verde);color:#fff;border-radius:14px;
+.hoja h3{font-size:clamp(18px,5vw,22px);font-weight:800;letter-spacing:-.025em;margin-bottom:18px}
+.hoja .guardar{width:100%;background:var(--azul);color:#fff;border-radius:14px;
   padding:17px;font-weight:700;font-size:16px;margin-top:8px}
 .hoja .guardar:active{transform:scale(.98)}
 .hoja .guardar:disabled{opacity:.5}
@@ -164,7 +178,7 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 .seg{display:flex;gap:9px}
 .seg button{flex:1;border:1.5px solid var(--linea);background:var(--crema);
   border-radius:12px;padding:14px 6px;font-size:15px;font-weight:500}
-.seg button.on{background:var(--verde);border-color:var(--verde);color:#fff;font-weight:700}
+.seg button.on{background:var(--azul);border-color:var(--azul);color:#fff;font-weight:700}
 
 .aviso{background:var(--ambar-suave);border-left:3px solid var(--ambar);
   border-radius:0 10px 10px 0;padding:13px 15px;font-size:13.5px;margin-bottom:18px}
@@ -177,8 +191,8 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 
 <!-- ══════════ LOGIN ══════════ -->
 <div id="login" class="wrap" hidden>
-  <h1>Casa</h1>
-  <p>Las cuentas de los dos.</p>
+  <h1>Finanzas<br>Hogar</h1>
+  <p>Las cuentas de Meli y Yobin.</p>
   <div class="field"><label for="em">Correo</label>
     <input id="em" type="email" autocomplete="username" inputmode="email"></div>
   <div class="field"><label for="pw">Contraseña</label>
@@ -191,7 +205,8 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 <div id="app" hidden>
   <div class="wrap">
     <header>
-      <h1>Casa</h1>
+      <h1>Finanzas Hogar<br><span style="color:var(--azul-2)">Meli y Yobin</span>
+        <span id="ver">v5</span></h1>
       <button id="salir">Salir</button>
     </header>
     <p id="aviso" class="err" hidden></p>
@@ -205,7 +220,7 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
       <div class="barra"><i class="comp" id="bComp"></i><i class="libre" id="bLibre"></i></div>
       <div class="leyenda">
         <span><i class="dot" style="background:var(--ambar-vivo)"></i>Con destino <b class="num" id="hComp">—</b></span>
-        <span><i class="dot" style="background:var(--verde-vivo)"></i>Sin asignar <b class="num" id="hHay">—</b></span>
+        <span><i class="dot" style="background:var(--azul-vivo)"></i>Sin asignar <b class="num" id="hHay">—</b></span>
       </div>
     </div>
 
@@ -237,23 +252,23 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 
   <!-- ---- PLAN ---- -->
   <div id="vPlan" class="wrap vista" hidden>
-    <section>
-      <h2>Las bolsas</h2>
-      <div class="sub">Cuánto llevan guardado en cada una y cuánto aparta cada quincena.</div>
-      <ul id="bolsas"></ul>
-    </section>
+    <div class="hero chico">
+      <div class="lab">Falta por pagar</div>
+      <div class="big num" id="pTotal">—</div>
+      <div class="leyenda"><span id="pCuenta">—</span></div>
+    </div>
 
     <section>
-      <h2>Gastos extra</h2>
-      <div class="sub">Lo que no es del mes a mes. Tocá el círculo al pagarlo, o el nombre para cambiarlo.</div>
+      <h2>Lo que falta</h2>
+      <div class="sub">Tocá el círculo cuando lo paguen. Tocá el nombre para cambiarlo o borrarlo.</div>
       <ul id="pend"></ul>
-      <div class="acciones" style="margin-top:16px">
-        <button data-abrir="plan" style="grid-column:1/-1">Agregar un gasto extra</button>
+      <div class="acciones" style="margin-top:18px">
+        <button data-abrir="plan" style="grid-column:1/-1">Agregar algo por pagar</button>
       </div>
     </section>
 
     <section>
-      <h2>Extras ya pagados</h2>
+      <h2>Ya pagado</h2>
       <ul id="pagados"></ul>
     </section>
   </div>
@@ -279,12 +294,23 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
       <h2>Quién puso qué</h2>
       <table><tbody id="mQuien"></tbody></table>
     </section>
+
+    <section>
+      <h2>La planeación</h2>
+      <div class="sub">Cuánto va a cada bolsa en el mes y en cada quincena.</div>
+      <table>
+        <thead><tr><th>Bolsa</th><th>Mensual</th><th>Q1</th><th>Q2</th></tr></thead>
+        <tbody id="mPlan"></tbody>
+      </table>
+      <div class="sub" style="margin-top:14px">Servicios, internet y la cuota de la cama se
+        pagan una vez al mes, pero se aparta la mitad en cada quincena.</div>
+    </section>
   </div>
 </div>
 
 <nav id="nav" hidden><div class="wrap">
   <button data-v="Inicio" class="on">Inicio</button>
-  <button data-v="Plan">Bolsas</button>
+  <button data-v="Plan">Por pagar</button>
   <button data-v="Mes">El mes</button>
 </div></nav>
 
@@ -296,8 +322,8 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 //  1. CONFIGURACIÓN — reemplazar con los valores de su proyecto
 //     Supabase > Project Settings > Data API
 // ════════════════════════════════════════════════════════════
-const SUPABASE_URL  = 'https://bdcvwakbiwgkldrqsjdo.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_n9YV58SpbRTeeT4rrnellg_VS2_J524';
+const SUPABASE_URL  = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_ANON = 'TU-CLAVE-ANON-PUBLICA';
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -446,20 +472,12 @@ function pintar(){
 }
 
 function pintarPlan(){
-  html('#bolsas', S.bolsas.map(b=>{
-    const g = guardadoEn(b), c = cuotaQ(b);
-    return `<li class="item">
-      <div class="cuerpo">
-        <div class="t">${esc(b.nombre)}</div>
-        <div class="m">aparta ${plata(c)} por quincena</div>
-      </div>
-      <div class="v"${g<0?' style="color:var(--rojo)"':''}>${plata(g)}</div>
-    </li>`;
-  }).join('') + `<li class="item" style="border-top:2px solid var(--tinta);border-bottom:none">
-      <div class="cuerpo"><div class="t" style="font-weight:700">Total por quincena</div></div>
-      <div class="v">${plata(cuotaTotalQ())}</div></li>`);
-
   const pend = pendientes();
+  txt('#pTotal', plata(suma(pend)));
+  const nVenc = pend.filter(p=>p.fecha < hoy()).length;
+  txt('#pCuenta', pend.length === 0 ? 'No falta nada por pagar'
+      : `${pend.length} ${pend.length===1?'cuenta':'cuentas'}` +
+        (nVenc ? ` · ${nVenc} vencida${nVenc>1?'s':''}` : ''));
   html('#pend', pend.length ? pend.map(p=>`
     <li class="item ${p.fecha < hoy() ? 'vencido':''}">
       <button class="tick" data-pagar="${p.id}" aria-label="Marcar pagado"></button>
@@ -514,6 +532,15 @@ function pintarMes(){
       <td class="num">${plata(pag)}</td>
       <td class="num${sob<0?' mal':''}">${plata(fal)}</td></tr>`;
   }).join(''));
+
+  html('#mPlan', S.bolsas.map(b=>{
+    const mes = Number(b.presupuesto), q = mes/2;
+    return `<tr><td>${esc(b.nombre)}</td><td class="num">${plata(mes)}</td>
+      <td class="num">${plata(q)}</td><td class="num">${plata(q)}</td></tr>`;
+  }).join('') + `<tr class="tot"><td>Total</td>
+    <td class="num">${plata(S.bolsas.reduce((t,b)=>t+Number(b.presupuesto),0))}</td>
+    <td class="num">${plata(cuotaTotalQ())}</td>
+    <td class="num">${plata(cuotaTotalQ())}</td></tr>`);
 
   html('#mQuien', S.personas.map(p=>{
     const mes = suma(S.aportes.filter(x=>x.persona===p.nombre && entre(x.fecha,ini,fin)));
