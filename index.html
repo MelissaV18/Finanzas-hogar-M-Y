@@ -130,6 +130,15 @@ li.item[data-mov]{cursor:pointer}
 .item.vencido .m{color:var(--rojo);font-weight:500}
 .item.hecho .t{color:var(--gris-2);text-decoration:line-through}
 .item.hecho .v{color:var(--gris-2);font-weight:500}
+.meta{padding:14px 0;border-bottom:1px solid var(--linea);cursor:pointer}
+.meta:last-child{border-bottom:none}
+.meta .fila{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.meta .t{font-size:clamp(14.5px,3.9vw,16px);font-weight:600}
+.meta .v{font-weight:700;white-space:nowrap;font-size:clamp(13.5px,3.6vw,15px)}
+.meta .pista{height:8px;border-radius:99px;background:var(--linea);margin-top:9px;overflow:hidden}
+.meta .pista i{display:block;height:100%;background:var(--azul-2);border-radius:99px}
+.meta.deuda .pista i{background:var(--ambar)}
+.meta .m{font-size:clamp(11.5px,3.1vw,13px);color:var(--gris);margin-top:6px}
 .vacio{color:var(--gris);font-size:14px;padding:26px 0;text-align:center;
   background:var(--crema);border-radius:14px;border:1px dashed var(--linea)}
 
@@ -149,7 +158,7 @@ tr.tot td{font-weight:800;border-top:2px solid var(--tinta)}
 nav{position:fixed;left:0;right:0;bottom:0;background:rgba(250,248,243,.93);
   backdrop-filter:blur(16px);border-top:1px solid var(--linea);
   padding-bottom:env(safe-area-inset-bottom);z-index:20}
-nav .wrap{display:grid;grid-template-columns:repeat(3,1fr);padding:0}
+nav .wrap{display:grid;grid-template-columns:repeat(4,1fr);padding:0}
 nav button{padding:clamp(13px,3.6vw,16px) 0;font-size:clamp(12px,3.3vw,14px);
   color:var(--gris);font-weight:600;position:relative}
 nav button.on{color:var(--tinta);font-weight:800}
@@ -303,12 +312,68 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
         pagan una vez al mes, pero se aparta la mitad en cada quincena.</div>
     </section>
   </div>
+
+  <!-- ---- PERSONAL ---- -->
+  <div id="vYo" class="wrap vista" hidden>
+    <div class="hero">
+      <div class="lab">Me queda esta quincena</div>
+      <div class="big num" id="yQueda">—</div>
+      <div class="barra"><i class="comp" id="yBarG"></i><i class="libre" id="yBarL"></i></div>
+      <div class="leyenda">
+        <span><i class="dot" style="background:var(--ambar-vivo)"></i>Gastado <b class="num" id="yGast">—</b></span>
+        <span><i class="dot" style="background:var(--azul-vivo)"></i>Entró <b class="num" id="yEntro">—</b></span>
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button data-abrir="ingreso">Registrar ingreso</button>
+      <button data-abrir="gastoYo" class="sec">Registrar gasto</button>
+    </div>
+
+    <section>
+      <h2>Mi quincena</h2>
+      <div class="sub" id="yQuin">—</div>
+      <div class="quin">
+        <dl>
+          <dt>Entró</dt><dd class="num" id="yIn">—</dd>
+          <dt>Ya gasté</dt><dd class="num" id="yOut">—</dd>
+          <dt>Tengo planeado</dt><dd class="num" id="yPlan">—</dd>
+        </dl>
+        <dl class="cierre"><dt id="yLibreLab">Me queda</dt><dd class="num" id="yLibre">—</dd></dl>
+      </div>
+    </section>
+
+    <section>
+      <h2>Mi planeación</h2>
+      <div class="sub">Lo que tengo pensado pagar. Tocá el círculo al pagarlo.</div>
+      <ul id="yPend"></ul>
+      <div class="acciones" style="margin-top:18px">
+        <button data-abrir="planYo" style="grid-column:1/-1">Agregar algo planeado</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Deudas y ahorros</h2>
+      <div class="sub">Tocá una para abonarle.</div>
+      <ul id="yMetas"></ul>
+      <div class="acciones" style="margin-top:18px">
+        <button data-abrir="meta" style="grid-column:1/-1">Agregar deuda o ahorro</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Mis movimientos</h2>
+      <div class="sub">Tocá uno para verlo o borrarlo.</div>
+      <ul id="yMovs"></ul>
+    </section>
+  </div>
 </div>
 
 <nav id="nav" hidden><div class="wrap">
   <button data-v="Inicio" class="on">Inicio</button>
   <button data-v="Plan">Por pagar</button>
   <button data-v="Mes">El mes</button>
+  <button data-v="Yo">Personal</button>
 </div></nav>
 
 <div class="velo" id="velo"></div>
@@ -319,8 +384,8 @@ nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:tran
 //  1. CONFIGURACIÓN — reemplazar con los valores de su proyecto
 //     Supabase > Project Settings > Data API
 // ════════════════════════════════════════════════════════════
-const SUPABASE_URL  = 'https://bdcvwakbiwgkldrqsjdo.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_n9YV58SpbRTeeT4rrnellg_VS2_J524';
+const SUPABASE_URL  = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_ANON = 'TU-CLAVE-ANON-PUBLICA';
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -361,7 +426,8 @@ function fechaCorta(iso){
 // ════════════════════════════════════════════════════════════
 //  3. ESTADO
 // ════════════════════════════════════════════════════════════
-let S = { bolsas:[], personas:[], aportes:[], gastos:[], plan:[], aporteQuin:0 };
+let S = { bolsas:[], personas:[], aportes:[], gastos:[], plan:[], aporteQuin:0,
+          yoCat:[], yoIn:[], yoGas:[], yoPlan:[], yoMetas:[] };
 
 async function cargar(){
   const [b,p,c,a,g,pl] = await Promise.all([
@@ -377,6 +443,28 @@ async function cargar(){
   S.bolsas = b.data; S.personas = p.data;
   S.aportes = a.data; S.gastos = g.data; S.plan = pl.data;
   S.aporteQuin = Number(c.data.find(x=>x.clave==='aporte_quincenal_persona')?.valor || 0);
+
+  // ---- lo personal: solo devuelve lo del usuario que entró ----
+  const [yc,yi,yg,yp,ym] = await Promise.all([
+    db.from('mis_categorias').select('*').order('orden'),
+    db.from('mis_ingresos').select('*').order('fecha',{ascending:false}),
+    db.from('mis_gastos').select('*').order('fecha',{ascending:false}),
+    db.from('mi_plan').select('*').order('fecha'),
+    db.from('mis_metas').select('*').order('id')
+  ]);
+  S.yoCat   = yc.data || [];  S.yoIn    = yi.data || [];
+  S.yoGas   = yg.data || [];  S.yoPlan  = yp.data || [];
+  S.yoMetas = ym.data || [];
+
+  // la primera vez, cada quien estrena sus propias categorías
+  if (!S.yoCat.length){
+    const base = [['Aporte hogar',391000],['Transporte',0],['Comida fuera',0],
+                  ['Ropa y cuidado',0],['Salud',0],['Ocio',0],['Ahorro',0],['Otros',0]];
+    const { data } = await db.from('mis_categorias')
+      .insert(base.map(([nombre,cuota],i)=>({nombre, cuota, orden:i+1})))
+      .select();
+    S.yoCat = data || [];
+  }
 }
 
 // ---------- los mismos cálculos del Excel ----------
@@ -466,6 +554,7 @@ function pintar(){
 
   pintarPlan();
   pintarMes();
+  pintarYo();
 }
 
 function pintarPlan(){
@@ -497,17 +586,106 @@ function pintarPlan(){
     </li>`).join('') : '<li class="vacio">Nada pagado todavía.</li>');
 }
 
+function pintarYo(){
+  const q = quincena(hoy());
+  const enQ = a => entre(a.fecha, q.ini, q.fin);
+
+  const entro  = suma(S.yoIn.filter(enQ));
+  const gaste  = suma(S.yoGas.filter(enQ));
+  const planeo = suma(S.yoPlan.filter(p => p.estado === 'Pendiente' && enQ(p)));
+  const queda  = entro - gaste - planeo;
+
+  txt('#yQueda', plata(queda));
+  $('#yQueda')?.classList.toggle('neg', queda < 0);
+  txt('#yEntro', plata(entro));
+  txt('#yGast',  plata(gaste + planeo));
+  const base = Math.max(entro, gaste + planeo, 1);
+  ancho('#yBarG', (Math.min(gaste+planeo, base)/base*100) + '%');
+  ancho('#yBarL', (Math.max(queda,0)/base*100) + '%');
+
+  txt('#yQuin', q.nombre);
+  txt('#yIn',   plata(entro));
+  txt('#yOut',  plata(gaste));
+  txt('#yPlan', plata(planeo));
+  txt('#yLibreLab', queda < 0 ? 'Me falta' : 'Me queda');
+  txt('#yLibre', plata(queda));
+  cls('#yLibre', 'num' + (queda < 0 ? ' mal' : ''));
+
+  // planeación propia
+  const pend = S.yoPlan.filter(p => p.estado === 'Pendiente');
+  html('#yPend', pend.length ? pend.map(p=>`
+    <li class="item ${p.fecha < hoy() ? 'vencido' : ''}">
+      <button class="tick" data-ypagar="${p.id}" aria-label="Marcar pagado"></button>
+      <div class="cuerpo" data-yeditar="${p.id}" style="cursor:pointer">
+        <div class="t">${esc(p.detalle || p.categoria)}</div>
+        <div class="m">${fechaCorta(p.fecha)}${p.fecha<hoy()?' · vencida':''} · ${esc(p.categoria)}</div>
+      </div>
+      <div class="v">${plata(p.monto)}</div>
+    </li>`).join('') : '<li class="vacio">No tenés nada planeado.</li>');
+
+  // metas
+  html('#yMetas', S.yoMetas.length ? S.yoMetas.map(m=>{
+    const obj = Number(m.objetivo), sal = Number(m.saldo);
+    const pct = Math.max(0, Math.min(100, obj ? sal/obj*100 : 0));
+    const deuda = m.tipo === 'Deuda';
+    return `<li class="meta ${deuda?'deuda':''}" data-meta="${m.id}">
+      <div class="fila"><span class="t">${esc(m.nombre)}</span>
+        <span class="v">${plata(sal)} <span style="color:var(--gris);font-weight:500">de ${plata(obj)}</span></span></div>
+      <div class="pista"><i style="width:${pct}%"></i></div>
+      <div class="m">${deuda?'Deuda':'Ahorro'} · ${Math.round(pct)}%${
+        deuda ? ` · faltan ${plata(obj-sal)}` : ''}</div>
+    </li>`;
+  }).join('') : '<li class="vacio">Sin deudas ni ahorros registrados.</li>');
+
+  // movimientos propios
+  const movs = [
+    ...S.yoIn .map(x=>({f:x.fecha, t:x.concepto||x.tipo, m:x.monto, mas:true,  tabla:'mis_ingresos', id:x.id})),
+    ...S.yoGas.map(x=>({f:x.fecha, t:x.detalle||x.categoria, m:x.monto, mas:false, sub:x.categoria,
+                        tabla:'mis_gastos', id:x.id}))
+  ].sort((a,b)=>b.f.localeCompare(a.f)).slice(0,12);
+
+  html('#yMovs', movs.length ? movs.map(m=>`
+    <li class="item" data-ymov="${m.tabla}:${m.id}">
+      <div class="cuerpo">
+        <div class="t">${esc(m.t)}</div>
+        <div class="m">${fechaCorta(m.f)}${m.sub?' · '+esc(m.sub):''}</div>
+      </div>
+      <div class="v" style="color:${m.mas?'var(--verde)':'inherit'}">
+        ${m.mas?'+':'−'}${plata(m.m).replace('−','')}</div>
+    </li>`).join('') : '<li class="vacio">Todavía no hay movimientos.</li>');
+}
+
 function pintarMes(){
   const sel = $('#selMes');
   if (!sel) return;
-  if (!sel.options.length){
-    const set = new Set([...S.aportes,...S.gastos,...S.plan].map(x=>x.fecha.slice(0,7)));
-    set.add(hoy().slice(0,7));
-    [...set].sort().reverse().forEach(ym=>{
+
+  // la lista se rearma en cada carga: va del mes más viejo con datos
+  // hasta un año hacia adelante, para poder planear
+  const conDatos = [...S.aportes, ...S.gastos, ...S.plan].map(x => x.fecha.slice(0,7));
+  const desde = [hoy().slice(0,7), ...conDatos].sort()[0];
+  const hasta = (() => {
+    const d = new Date(hoy());
+    d.setMonth(d.getMonth() + 12);
+    return d.toISOString().slice(0,7);
+  })();
+
+  const meses = [];
+  let [ay, am] = desde.split('-').map(Number);
+  while (`${ay}-${String(am).padStart(2,'0')}` <= hasta){
+    meses.push(`${ay}-${String(am).padStart(2,'0')}`);
+    am++; if (am === 13){ am = 1; ay++; }
+  }
+
+  const elegido = sel.value || hoy().slice(0,7);
+  const firma = meses.join();
+  if (sel.dataset.firma !== firma){
+    sel.dataset.firma = firma;
+    sel.innerHTML = '';
+    meses.reverse().forEach(ym => {
       const [a,m] = ym.split('-');
       sel.add(new Option(`${MES[+m-1]} ${a}`, ym));
     });
-    sel.value = hoy().slice(0,7);
+    sel.value = meses.includes(elegido) ? elegido : hoy().slice(0,7);
   }
   const ym = sel.value, ini = ym+'-01';
   const [a,m] = ym.split('-').map(Number);
@@ -565,6 +743,7 @@ function cerrarHoja(){
 $('#velo').onclick = cerrarHoja;
 
 const optBolsas = () => S.bolsas.map(b=>`<option>${esc(b.nombre)}</option>`).join('');
+const optCat    = () => S.yoCat.map(c=>`<option>${esc(c.nombre)}</option>`).join('');
 
 const FORMS = {
   verMov: (tabla, x) => `
@@ -590,6 +769,63 @@ const FORMS = {
     <button class="guardar" data-actualizar="${p.id}">Guardar cambios</button>
     <button class="guardar" style="background:var(--rojo);margin-top:8px" data-borrar="plan:${p.id}">Borrar</button>
     <button class="cerrar" data-x>Cancelar</button>`,
+
+  ingreso: () => `
+    <h3>Registrar ingreso</h3>
+    <div class="field"><label>Tipo</label>
+      <div class="seg" id="segT">
+        <button data-t="Sueldo" class="on">Sueldo</button>
+        <button data-t="Extra">Extra</button></div></div>
+    <div class="field"><label for="cI">Concepto</label><input id="cI" placeholder="Quincena de septiembre"></div>
+    <div class="field"><label for="fI">Fecha</label><input id="fI" type="date" value="${hoy()}"></div>
+    <div class="field"><label for="mI">Cuánto</label>
+      <input id="mI" type="number" inputmode="numeric" placeholder="0"></div>
+    <button class="guardar" data-g="ingreso">Guardar</button>
+    <button class="cerrar" data-x>Cancelar</button>`,
+
+  gastoYo: () => `
+    <h3>Registrar gasto</h3>
+    <div class="field"><label for="dY">Qué fue</label><input id="dY" placeholder="Almuerzo"></div>
+    <div class="field"><label for="cY">Categoría</label><select id="cY">${optCat()}</select></div>
+    <div class="field"><label for="fY">Fecha</label><input id="fY" type="date" value="${hoy()}"></div>
+    <div class="field"><label for="mY">Cuánto</label>
+      <input id="mY" type="number" inputmode="numeric" placeholder="0"></div>
+    <button class="guardar" data-g="gastoYo">Guardar</button>
+    <button class="cerrar" data-x>Cancelar</button>`,
+
+  planYo: () => `
+    <h3>Agregar algo planeado</h3>
+    <div class="field"><label for="dPY">Qué es</label><input id="dPY" placeholder="Aporte al hogar"></div>
+    <div class="field"><label for="cPY">Categoría</label><select id="cPY">${optCat()}</select></div>
+    <div class="field"><label for="fPY">Para cuándo</label><input id="fPY" type="date" value="${hoy()}"></div>
+    <div class="field"><label for="mPY">Cuánto</label>
+      <input id="mPY" type="number" inputmode="numeric" placeholder="0"></div>
+    <button class="guardar" data-g="planYo">Guardar</button>
+    <button class="cerrar" data-x>Cancelar</button>`,
+
+  meta: () => `
+    <h3>Deuda o ahorro</h3>
+    <div class="field"><label>Tipo</label>
+      <div class="seg" id="segM">
+        <button data-m="Ahorro" class="on">Ahorro</button>
+        <button data-m="Deuda">Deuda</button></div></div>
+    <div class="field"><label for="nM">Nombre</label><input id="nM" placeholder="Viaje / Tarjeta"></div>
+    <div class="field"><label for="oM">Meta total</label>
+      <input id="oM" type="number" inputmode="numeric" placeholder="0"></div>
+    <div class="field"><label for="sM">Llevo abonado</label>
+      <input id="sM" type="number" inputmode="numeric" value="0"></div>
+    <button class="guardar" data-g="meta">Guardar</button>
+    <button class="cerrar" data-x>Cancelar</button>`,
+
+  verMeta: m => `
+    <h3>${esc(m.nombre)}</h3>
+    <div class="aviso">${m.tipo==='Deuda'?'Deuda':'Ahorro'} · llevás ${plata(m.saldo)} de ${plata(m.objetivo)}</div>
+    <div class="field"><label for="aM">Abonar</label>
+      <input id="aM" type="number" inputmode="numeric" placeholder="0"></div>
+    <button class="guardar" data-abonar="${m.id}">Abonar</button>
+    <button class="guardar" style="background:var(--rojo);margin-top:8px"
+      data-borrar="mis_metas:${m.id}">Borrar</button>
+    <button class="cerrar" data-x>Cerrar</button>`,
 
   aporte: () => `
     <h3>Registrar aporte</h3>
@@ -631,7 +867,7 @@ const FORMS = {
 //  6. ACCIONES
 // ════════════════════════════════════════════════════════════
 document.addEventListener('click', async e => {
-  const t = e.target.closest('[data-abrir],[data-x],[data-p],[data-g],[data-pagar],[data-deshacer],[data-v],[data-mov],[data-editar],[data-borrar],[data-actualizar]');
+  const t = e.target.closest('[data-abrir],[data-x],[data-p],[data-g],[data-pagar],[data-deshacer],[data-v],[data-mov],[data-editar],[data-borrar],[data-actualizar],[data-t],[data-m],[data-ymov],[data-yeditar],[data-ypagar],[data-meta],[data-abonar]');
   if (!t) return;
 
   if (t.dataset.abrir) return abrirHoja(FORMS[t.dataset.abrir]());
@@ -674,9 +910,60 @@ document.addEventListener('click', async e => {
   }
   if (t.hasAttribute('data-x')) return cerrarHoja();
 
-  if (t.dataset.p){
+  if (t.dataset.p || t.dataset.t || t.dataset.m){
     [...t.parentElement.children].forEach(b=>b.classList.remove('on'));
     t.classList.add('on'); return;
+  }
+
+  if (t.dataset.ymov){
+    const [tabla, id] = t.dataset.ymov.split(':');
+    const fila = (tabla==='mis_ingresos' ? S.yoIn : S.yoGas).find(x=>String(x.id)===id);
+    if (!fila) return;
+    return abrirHoja(`
+      <h3>${esc(fila.concepto || fila.detalle || fila.categoria || fila.tipo)}</h3>
+      <div class="aviso">${plata(fila.monto)} · ${fechaCorta(fila.fecha)}</div>
+      <button class="guardar" style="background:var(--rojo)"
+        data-borrar="${tabla}:${fila.id}">Borrar</button>
+      <button class="cerrar" data-x>Cerrar</button>`);
+  }
+
+  if (t.dataset.meta){
+    const m = S.yoMetas.find(x=>String(x.id)===t.dataset.meta);
+    if (m) abrirHoja(FORMS.verMeta(m));
+    return;
+  }
+
+  if (t.dataset.abonar){
+    const m = S.yoMetas.find(x=>String(x.id)===t.dataset.abonar);
+    const ab = Number($('#aM').value);
+    if (!ab) return;
+    t.disabled = true;
+    const { error } = await db.from('mis_metas')
+      .update({saldo: Number(m.saldo) + ab}).eq('id', m.id);
+    if (error){ t.disabled = false; return alert(error.message); }
+    cerrarHoja(); return refrescar();
+  }
+
+  if (t.dataset.ypagar){
+    const p = S.yoPlan.find(x=>String(x.id)===t.dataset.ypagar);
+    t.classList.add('on');
+    const { data, error } = await db.from('mis_gastos').insert({
+      fecha:hoy(), categoria:p.categoria, detalle:p.detalle, monto:p.monto
+    }).select().single();
+    if (error) return alert(error.message);
+    await db.from('mi_plan').update({estado:'Pagado', gasto_id:data.id}).eq('id',p.id);
+    return refrescar();
+  }
+
+  if (t.dataset.yeditar){
+    const p = S.yoPlan.find(x=>String(x.id)===t.dataset.yeditar);
+    if (!p) return;
+    return abrirHoja(`
+      <h3>${esc(p.detalle||p.categoria)}</h3>
+      <div class="aviso">${plata(p.monto)} · para el ${fechaCorta(p.fecha)}</div>
+      <button class="guardar" style="background:var(--rojo)"
+        data-borrar="mi_plan:${p.id}">Borrar</button>
+      <button class="cerrar" data-x>Cerrar</button>`);
   }
 
   if (t.dataset.v){
@@ -701,6 +988,30 @@ document.addEventListener('click', async e => {
         if (!monto) throw new Error('Falta el monto.');
         await ins('gastos', { fecha:$('#fG').value, bolsa:$('#bG').value,
           detalle:$('#dG').value || null, monto, origen:$('#oG').value });
+      }
+      if (t.dataset.g === 'ingreso'){
+        const monto = Number($('#mI').value);
+        if (!monto) throw new Error('Falta el monto.');
+        await ins('mis_ingresos', { fecha:$('#fI').value, concepto:$('#cI').value || null,
+          monto, tipo:$('#segT .on').dataset.t });
+      }
+      if (t.dataset.g === 'gastoYo'){
+        const monto = Number($('#mY').value);
+        if (!monto) throw new Error('Falta el monto.');
+        await ins('mis_gastos', { fecha:$('#fY').value, categoria:$('#cY').value,
+          detalle:$('#dY').value || null, monto });
+      }
+      if (t.dataset.g === 'planYo'){
+        const monto = Number($('#mPY').value);
+        if (!monto) throw new Error('Falta el monto.');
+        await ins('mi_plan', { fecha:$('#fPY').value, categoria:$('#cPY').value,
+          detalle:$('#dPY').value || null, monto });
+      }
+      if (t.dataset.g === 'meta'){
+        const obj = Number($('#oM').value);
+        if (!obj) throw new Error('Falta la meta.');
+        await ins('mis_metas', { nombre:$('#nM').value || 'Sin nombre',
+          tipo:$('#segM .on').dataset.m, objetivo:obj, saldo:Number($('#sM').value) || 0 });
       }
       if (t.dataset.g === 'plan'){
         const monto = Number($('#mP').value);
